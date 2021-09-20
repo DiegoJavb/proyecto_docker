@@ -1,0 +1,107 @@
+version: '3'
+
+services: 
+#  DATABASE
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - wpsite
+  #  PHPMYADMIN
+  phpmyadmin:
+    depends_on: 
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports: 
+      - "8080:80"
+    environment: 
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+    networks:
+      - wpsite
+  #####
+  #  WORDPRESS
+  
+  wordpress:
+    depends_on: 
+      - db
+    image: wordpress:latest
+    ports: 
+      - "5000:80"
+    restart: always
+    volumes: ['./app0/:/var/www/html']
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks: 
+      - wpsite
+
+  wordpress1:
+    depends_on: 
+      - db
+    image: wordpress:latest
+    ports: 
+      - "5001:80"
+    restart: always
+    volumes: ['./app1/:/var/www/html']
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks: 
+      - wpsite
+
+  wordpress2:
+    depends_on: 
+      - db
+    image: wordpress:latest
+    ports: 
+      - "5002:80"
+    restart: always
+    volumes: ['./app2/:/var/www/html']
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks: 
+      - wpsite
+
+  wordpress3:
+    depends_on: 
+      - db
+    image: wordpress:latest
+    ports: 
+      - "5003:80"
+    restart: always
+    volumes: ['./app3/:/var/www/html']
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks: 
+      - wpsite
+  
+  nginx:
+    build: ./nginx
+    ports: 
+      - "3000:80"
+    depends_on: 
+      - wordpress
+      - wordpress1
+      - wordpress2
+      - wordpress3
+networks: 
+  wpsite:
+volumes:
+  db_data:
+
+    
